@@ -11,7 +11,7 @@ do
     DIR=$( basename "$PWD" | sed "s|$HOME|~|" )
     
     # Show prompt with colors and read input
-    printf "\e[35m|| <<\e[1m\e[45m$USER\e[0m\e[35m>> (\e[36m$DIR\e[35m) ||: \e[0m"
+    printf "\e[35m|| <<\e[1m\e[35m$USER\e[0m\e[35m>> (\e[36m$DIR\e[35m) ||: \e[0m"
     read input
 
     # If input is "salir", exit the loop
