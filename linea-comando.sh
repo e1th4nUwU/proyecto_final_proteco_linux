@@ -11,14 +11,23 @@ do
     DIR=$( basename "$PWD" | sed "s|$HOME|~|" )
     
     # Show prompt with colors and read input
-    printf "\e[35m|| <<\e[1m\e[45m$USER\e[0m\e[35m>> (\e[36m$DIR\e[35m) ||: \e[0m"
+    printf "\e[35m|| <<\e[1;36m$USER\e[0m\e[35m>> (\e[36m$DIR\e[35m) ||: \e[0m"
     read input
+    
+    # If command with the specified name exists inside the current directory, execute the script
+    if [ -e "$input.sh" ]
+    then
+	source "$input.sh"
+    
+    # If input is "salir", exit the loopd
+    elif [ "$input" == "salir" ]
+    then
+	break
 
-    # If input is "salir", exit the loop
-    if [ "$input" == "salir" ]; then
-        break
+    # Execute OS command
+    else
+	$input
     fi
-    $input
 done
 
 # Return to the default trap for SIGTSTP, SIGINT and SIGTERM
