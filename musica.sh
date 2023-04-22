@@ -57,6 +57,7 @@ for file in $path*
 do
     if [ "${file##*.}" == "mp3" ]
     then
+		echo "Found song: $file"
 		# Add song to the array
 		songs+=("$file")
 		song_name=("$(basename "$file")")
@@ -75,71 +76,105 @@ fi
 	
 # Menu cycle
 selected=0
-now_playing=-1
-touch queue_file.temp
-now_playing_file=$(mktemp)
-function kill_songs {
-	pkill mpg123
+current_song=-1
+loop=false
+pausa=false
+pid=""
+echo "" > tmp # tmp file to store name of the current song
+
+
+# Play function
+function play(){
+	# Play the selected song
+	while true
+	do
+		echo "${song_names[$current_song]}" > tmp # Save the name of the current song
+		mpg123 -q "${songs[$current_song]}" # Play the song	
+		# Increase counter
+		current_song=$((current_song+1))
+		# If loop is not enabled break the cycle, if not go back to the first song
+		if [ $current_song == $i ]
+		then
+			if [ $loop == false ]
+			then
+				echo "" > tmp # Clear tmp file
+				break
+			else
+				current_song=0
+			fi
+		fi
+	done
 }
-function play_songs {	
-	
-    	# Loop while queue is not empty
-		while [ "$(cat queue_file.temp)" != "" ]
-    	do
-			cat queue_file.temp
-			queue=' ' read -r -a queue <<< "$(cat queue_file.temp)"
-			echo "QUEUE ES ${queue[@]}"
-			# Store front of queue in a variable
-    	    current=$(echo "$queue[@]" | grep -oP '.*\.mp3')
-    	    # Remove it from the queue and save to file
-    	    queue=("${queue[@]:1}")
-			echo "${queue[@]}" > queue_file.temp
-    	    # Play song	
-    	    mpg123 -q "$current" &
-    	    # Wait for song to finish
-    	    wait $!
-			sleep 0.5
-		done
-		printf "" > queue_file.temp
+# Kill track
+function kill_track(){
+	# Kill the current song
+	if [ $current_song != -1 ]
+	then
+		kill $pid
+	fi
+	pkill mpg123
 }
 while true
 do
 	# Clear the screen
-	# clear
+	clear
 
 	# Show controls
 	echo -e " \e[34m█▀▀ █▀█ █▄░█ ▀█▀ █▀█ █▀█ █░░ █▀▀ █▀
  █▄▄ █▄█ █░▀█ ░█░ █▀▄ █▄█ █▄▄ ██▄ ▄█
 
 	\e[35m↑↓\e[0m: 	Moverse entre las canciones
-	\e[35mo\e[0m: 	Reproducir la canción seleccionada
-	\e[35mp\e[0m: 	Pausar la canción
-	\e[35mc\e[0m: 	Continuar la canción
-	\e[35ms\e[0m: 	Detener la canción
-	\e[35m→\e[0m: 	Saltar a la siguiente canción
-	\e[35m←\e[0m: 	Regresar a la canción anterior
-	\e[35mq\e[0m: 	Salir del programa
+	\e[35mo\e[0m : 	Reproducir la canción seleccionada
+	\e[35mp\e[0m : 	Pausar la canción
+	\e[35mc\e[0m : 	Continuar la canción
+	\e[35ms\e[0m : 	Detener la canción
+	\e[35m→\e[0m : 	Saltar a la siguiente canción
+	\e[35m←\e[0m : 	Regresar a la canción anterior
+	\e[35mr\e[0m : 	Encender/Apagar el modo repetir
+	\e[35mq\e[0m : 	Salir del programa
 	"
 	
 	# Show songs title
 	echo -e " \e[34m█▀▀ ▄▀█ █▄░█ █▀▀ █ █▀█ █▄░█ █▀▀ █▀
  █▄▄ █▀█ █░▀█ █▄▄ █ █▄█ █░▀█ ██▄ ▄█
 "
-	echo $now_playing
-	tput sgr0  # Reset text color
-	if [ $now_playing -ne -1 ]
-	then
-		echo -e "\e[35mEN REPRODUCCIÓN: ${song_names[$now_playing]}\e[0m"
-	fi
-	echo
 
+	# Show playing status
+	if [ $current_song != -1 ]
+	then
+		if [ $pausa == true ]
+		then
+			echo -e "\e[31mPAUSADO"
+		else
+			echo -e "\e[32mREPRODUCIENDO"
+		fi
+	fi
+
+	# Show current loop status
+	if [ $loop == true ]
+	then
+		echo -e "\e[94mREPETIR: \e[32mON\e[0m
+		"
+	else
+		echo -e "\e[94mREPETIR: \e[31mOFF\e[0m
+		"
+	fi
+        
     # Show available songs
 	for i in "${!song_names[@]}"; do
-        if [[ $i -eq $selected ]]; then
+		if [[ $i -eq $selected ]]; then
         	# Highlight the selected file with a ">" symbol
-	        printf "\e[35m> \e[0m%s\n" "${song_names[$i]}"
-        else
-        	printf "  %s\n" "${song_names[$i]}"
+	        printf "\e[35m> "
+		else
+			printf "  "
+		fi
+		# Compare current song with the one in the tmp file
+		if [ "${song_names[$i]}" == "$(cat tmp)" ]
+		then
+        	# Highlight the currently playing song in green
+	        printf "\e[92m%s\n\e[0m" "${song_names[$i]}"
+		else
+        	printf "\e[0m%s\n" "${song_names[$i]}"
 	    fi
     done
         
@@ -148,8 +183,9 @@ do
 	# Execute actions based on the user input
 	case $input in
 		'q')  # Quit
-			rm queue_file.temp
-			rm "$now_playing_file"
+			kill_track
+			rm tmp
+			clear
 			exit
 			;;
 		$'A')  # Up arrow
@@ -166,63 +202,84 @@ do
 			;;
 		# Play selected song
 		 $'o')
-		 	# Kill current song and stop queue
-			queue=()
-			# Add selected song and the next ones after it to queue
-			for ((j = $selected; j <= $i; j++))
-			do
-				queue+=("${songs[$j]}")
-			done
-    		now_playing=$selected	
-			echo "Comparando"
-			if [[ $(pgrep mpg123) ]]
-			then
-				echo "KILLING SONGS"	
-				printf "" > queue_file.temp
-				echo "${queue[@]}" > queue_file.temp
-				kill_songs	
-			else
-				echo "PLAYING SONGS"
-				echo "${queue[@]}" > queue_file.temp
-				play_songs&
-			fi
+		 	# Change status
+		 	pausa=false
+    		# Kill previous track
+    		kill_track
+    		# Play selected song
+    		current_song=$selected
+			play & pid=$!
 			;;
         $'p') # Pause
+			# Change status
+		 	pausa=true
 			kill -STOP $(pgrep mpg123) > /dev/null 2>&1
 			;;
 		$'c') # Continue
+			# Change status
+		 	pausa=false
 			kill -CONT $(pgrep mpg123) > /dev/null 2>&1
 			;;
 		$'s') # Stop
-			pkill mpg123
-			now_playing=-1
+			# Change status
+		 	pausa=true
+			# Kill previous track
+			kill_track
+			current_song=-1
 			;;
 		$'C') # Next
-			pkill mpg123
+			# Change status
+		 	pausa=false
+			# Kill previous track
+			kill_track
+			# Find next song
+			if [ $current_song -lt $i ]
+			then
+				current_song=$((current_song + 1))
+				play & pid=$!
+			elif [ $current_song -eq $i ]
+			then
+				if [ $loop == true ]
+				then
+					current_song=0
+					play & pid=$!
+				else
+					current_song=-1
+					pausa=true
+					echo "" > tmp # Clear tmp file
+				fi
+			fi	
 			;;
 		$'D') # Back
-			pkill mpg123
-			if [ $now_playing -gt 0 ]
+			# Change status
+		 	pausa=false
+			# Kill previous track
+			kill_track
+			# Find previous song
+			if [ $current_song -eq -1 ]
 			then
-				now_playing=$((now_playing - 1))
+				current_song=$i
+				play & pid=$!
+			elif [ $current_song -eq 0 ]
+			then
+				if [ $loop == true ] || [ $current_song -eq -1 ]
+				then
+					current_song=$i
+				else
+					current_song=0
+				fi
+				play & pid=$!
+			else
+				current_song=$((current_song - 1))
 			fi
-			mpg123 --quiet "${songs[$now_playing]}" > /tmp/mpg123.out 2>&1 &
 			;;
-		$'(s') # Stop		
-			rm queue_file.temp
-			pkill mpg123
-			;;
+		$'r') # Repeat
+			if [ $loop == false ]
+			then
+				loop=true
+			else
+				loop=false
+			fi
+			;;	
     esac
 done
-
-# Do something with the selected file
-echo "You selected: $selected_file"
-# Run song while showing menu and player options
-
-
-# Test run
-mpg123 --quiet Playlist/15\ Weight\ of\ the\ World\ English\ Version.mp3 > /tmp/mpg123.out 2>&1 &
-
-# kill -STOP $(pgrep mpg123)
-
-# kill -CONT $(pgrep mpg123) 2>/dev/null
