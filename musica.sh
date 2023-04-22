@@ -31,14 +31,20 @@ if ! which mpg123 >/dev/null; then
 	fi
 fi
 
-# Ask for playist path
-read -p $'
-\e[37mIngresa la ruta de dónde se encuentran las canciones\e[2m(presiona enter si es en el directorio actual)\e[0m: ' path
-if [ -z "$path" ] ; then # Assign current one if it's empty
-	path=$(pwd)
-elif [[ $path  != "/"* ]] ; then 
+# Ask for playist path if not already given
+if [ -z "$1" ] ; then 
+	read -p $'
+	\e[37mIngresa la ruta de dónde se encuentran las canciones\e[2m(presiona enter si es en el directorio actual)\e[0m: ' path
+	if [ -z "$path" ] ; then # Assign current one if it's empty
+		path=$(pwd)
+	fi
+else
+	path=$1
+fi
+if [[ $path  != "/"* ]] ; then 
 	path=$(pwd)/$path/
-elif [ ! -d "/dir1/" ] ; then
+fi
+if [ ! -d $path ] ; then
 	echo -e "
         ->\e[31mERROR: No existe el directorio
         \e[37mCerrando programa...
@@ -172,7 +178,7 @@ while true ; do
 			kill_track
 			rm tmp
 			clear
-			exit
+			break
 			;;
 		$'A')  # Up arrow
 		        if [ $selected -gt 0 ] ; then
@@ -239,17 +245,16 @@ while true ; do
 			# Find previous song
 			if [ $current_song -eq -1 ] ; then
 				current_song=$i
-				play & pid=$!
 			elif [ $current_song -eq 0 ] ; then
-				if [ $loop == true ] || [ $current_song -eq -1 ] ; then
+				if [ $loop == true ] ; then
 					current_song=$i
 				else
 					current_song=0
 				fi
-				play & pid=$!
 			else
 				current_song=$((current_song - 1))
 			fi
+			play & pid=$!
 			;;
 		$'r') # Repeat
 			if [ $loop == false ] ; then
@@ -260,3 +265,4 @@ while true ; do
 			;;	
     esac
 done
+reset
