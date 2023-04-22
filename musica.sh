@@ -34,14 +34,11 @@ fi
 # Ask for playist path
 read -p $'
 \e[37mIngresa la ruta de dónde se encuentran las canciones\e[2m(presiona enter si es en el directorio actual)\e[0m: ' path
-if [ -z "$path" ] # Assign current one if it's empty
-then
+if [ -z "$path" ] ; then # Assign current one if it's empty
 	path=$(pwd)
-elif [[ $path  != "/"* ]]
-then 
+elif [[ $path  != "/"* ]] ; then 
 	path=$(pwd)/$path/
-elif [ ! -d "/dir1/" ] 
-then
+elif [ ! -d "/dir1/" ] ; then
 	echo -e "
         ->\e[31mERROR: No existe el directorio
         \e[37mCerrando programa...
@@ -55,18 +52,16 @@ songs=()
 song_names=()
 for file in $path*
 do
-    if [ "${file##*.}" == "mp3" ]
-    then
-		echo "Found song: $file"
-		# Add song to the array
-		songs+=("$file")
-		song_name=("$(basename "$file")")
-		song_names+=("${song_name::-4}")
-		i+=1
+    if [ "${file##*.}" == "mp3" ] ; then
+	echo "Found song: $file"
+	# Add song to the array
+	songs+=("$file")
+	song_name=("$(basename "$file")")
+	song_names+=("${song_name::-4}")
+	i+=1
     fi
 done
-if [ $i == 0  ] # No songs detected causes the program to close
-then
+if [ $i == 0  ] ; then # No songs detected causes the program to close
 	echo -e "
     	->\e[31mERROR: No hay archivos .mp3 en el directorio
         \e[37mCerrando programa...
@@ -86,17 +81,14 @@ echo "" > tmp # tmp file to store name of the current song
 # Play function
 function play(){
 	# Play the selected song
-	while true
-	do
+	while true ; do
 		echo "${song_names[$current_song]}" > tmp # Save the name of the current song
 		mpg123 -q "${songs[$current_song]}" # Play the song	
 		# Increase counter
 		current_song=$((current_song+1))
 		# If loop is not enabled break the cycle, if not go back to the first song
-		if [ $current_song == $i ]
-		then
-			if [ $loop == false ]
-			then
+		if [ $current_song == $i ] ; then
+			if [ $loop == false ] ; then
 				echo "" > tmp # Clear tmp file
 				break
 			else
@@ -108,14 +100,12 @@ function play(){
 # Kill track
 function kill_track(){
 	# Kill the current song
-	if [ $current_song != -1 ]
-	then
+	if [ $current_song != -1 ] ; then
 		kill $pid
 	fi
 	pkill mpg123
 }
-while true
-do
+while true ; do
 	# Clear the screen
 	clear
 
@@ -140,10 +130,8 @@ do
 "
 
 	# Show playing status
-	if [ $current_song != -1 ]
-	then
-		if [ $pausa == true ]
-		then
+	if [ $current_song != -1 ] ; then
+		if [ $pausa == true ] ; then
 			echo -e "\e[31mPAUSADO"
 		else
 			echo -e "\e[32mREPRODUCIENDO"
@@ -151,8 +139,7 @@ do
 	fi
 
 	# Show current loop status
-	if [ $loop == true ]
-	then
+	if [ $loop == true ] ; then
 		echo -e "\e[94mREPETIR: \e[32mON\e[0m
 		"
 	else
@@ -169,12 +156,11 @@ do
 			printf "  "
 		fi
 		# Compare current song with the one in the tmp file
-		if [ "${song_names[$i]}" == "$(cat tmp)" ]
-		then
-        	# Highlight the currently playing song in green
-	        printf "\e[92m%s\n\e[0m" "${song_names[$i]}"
+		if [ "${song_names[$i]}" == "$(cat tmp)" ] ; then
+	        	# Highlight the currently playing song in green
+		        printf "\e[92m%s\n\e[0m" "${song_names[$i]}"
 		else
-        	printf "\e[0m%s\n" "${song_names[$i]}"
+        		printf "\e[0m%s\n" "${song_names[$i]}"
 	    fi
     done
         
@@ -189,14 +175,12 @@ do
 			exit
 			;;
 		$'A')  # Up arrow
-	        if [ $selected -gt 0 ]
-			then
+		        if [ $selected -gt 0 ] ; then
 				selected=$((selected - 1))
 			fi
 			;;
 		$'B')  # Down arrow
-			if [[ $selected -lt $i ]]
-			then
+			if [[ $selected -lt $i ]] ; then
 				selected=$((selected + 1))
 			fi
 			;;
@@ -233,14 +217,11 @@ do
 			# Kill previous track
 			kill_track
 			# Find next song
-			if [ $current_song -lt $i ]
-			then
+			if [ $current_song -lt $i ] ; then
 				current_song=$((current_song + 1))
 				play & pid=$!
-			elif [ $current_song -eq $i ]
-			then
-				if [ $loop == true ]
-				then
+			elif [ $current_song -eq $i ] ; then
+				if [ $loop == true ] ; then
 					current_song=0
 					play & pid=$!
 				else
@@ -256,14 +237,11 @@ do
 			# Kill previous track
 			kill_track
 			# Find previous song
-			if [ $current_song -eq -1 ]
-			then
+			if [ $current_song -eq -1 ] ; then
 				current_song=$i
 				play & pid=$!
-			elif [ $current_song -eq 0 ]
-			then
-				if [ $loop == true ] || [ $current_song -eq -1 ]
-				then
+			elif [ $current_song -eq 0 ] ; then
+				if [ $loop == true ] || [ $current_song -eq -1 ] ; then
 					current_song=$i
 				else
 					current_song=0
@@ -274,8 +252,7 @@ do
 			fi
 			;;
 		$'r') # Repeat
-			if [ $loop == false ]
-			then
+			if [ $loop == false ] ; then
 				loop=true
 			else
 				loop=false
