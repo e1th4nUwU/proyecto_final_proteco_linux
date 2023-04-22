@@ -17,7 +17,7 @@ do
     # If command with the specified name exists inside the current directory, execute the script
     if [ -e "$input.sh" ]
     then
-	source "$input.sh"
+	source "./$input.sh"
     
     # If input is "salir", exit the loopd
     elif [ "$input" == "salir" ]

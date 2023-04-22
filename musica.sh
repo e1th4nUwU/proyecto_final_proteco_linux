@@ -172,7 +172,7 @@ while true ; do
 			kill_track
 			rm tmp
 			clear
-			exit
+			break
 			;;
 		$'A')  # Up arrow
 		        if [ $selected -gt 0 ] ; then
@@ -239,17 +239,16 @@ while true ; do
 			# Find previous song
 			if [ $current_song -eq -1 ] ; then
 				current_song=$i
-				play & pid=$!
 			elif [ $current_song -eq 0 ] ; then
-				if [ $loop == true ] || [ $current_song -eq -1 ] ; then
+				if [ $loop == true ] ; then
 					current_song=$i
 				else
 					current_song=0
 				fi
-				play & pid=$!
 			else
 				current_song=$((current_song - 1))
 			fi
+			play & pid=$!
 			;;
 		$'r') # Repeat
 			if [ $loop == false ] ; then
@@ -260,3 +259,4 @@ while true ; do
 			;;	
     esac
 done
+reset
