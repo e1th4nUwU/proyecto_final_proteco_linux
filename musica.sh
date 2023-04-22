@@ -32,7 +32,7 @@ if ! which mpg123 >/dev/null; then
 fi
 
 # Ask for playist path if not already given
-if [ -z "$1" ] ; then 
+if [ -z "$1" ] || [ "$1" -eq "" ] ; then 
 	read -p $'
 	\e[37mIngresa la ruta de dónde se encuentran las canciones\e[2m(presiona enter si es en el directorio actual)\e[0m: ' path
 	if [ -z "$path" ] ; then # Assign current one if it's empty

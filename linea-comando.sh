@@ -17,8 +17,11 @@ do
     # If command with the specified name exists inside the current directory, execute the script
     if [ -e "$(echo $input | cut -d ' ' -f1).sh" ]
     then
-	source "./$(echo $input | cut -d ' ' -f1).sh" "./$(echo $input | cut -d ' ' -f2)"
-    
+        if echo $input | grep -q " "; then
+            source "./$(echo $input | cut -d ' ' -f1).sh" "$(echo $input | cut -d ' ' -f2)"
+        else
+	        source "./$input.sh"
+        fi    
     # If input is "salir", exit the loopd
     elif [ "$input" == "salir" ]
     then
