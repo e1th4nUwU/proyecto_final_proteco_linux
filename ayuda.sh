@@ -2,7 +2,7 @@
 # Check if user has given an argument, if not, ask it
 if [ -z $1 ] ; then
     echo ""
-    read -p $'\e[35m-> \e[36mIngrese el comando del cual necesitas ayuda : \e[0m'  command
+    read -p $'\e[35m-> \e[36mIngrese el comando del cual necesitas ayuda: \e[0m'  command
 else 
     command=$1
 fi
