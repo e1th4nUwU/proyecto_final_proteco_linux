@@ -11,6 +11,20 @@ if [ -z $command ] ; then
 else 
     # Check if command was created by us
     case $command in
+        "-a" ) # Descripción de todos los comandos
+            ;;
+        "-l" ) # Lista de comandos disponibles
+            echo -e "\e[35m --------------------------"
+            echo -e " || \e[36mComandos disponibles \e[35m||"
+            echo -e " --------------------------\e[0m"
+            echo -e "   ahorcado"    
+            echo -e "   ayuda"
+            echo -e "   buscar"
+            echo -e "   creditos"
+            echo -e "   infosis"
+            echo -e "   musica"
+            echo -e "   tiempo"
+            ;;
         "ahorcado" ) # Juego ahorcado
             echo -e "\e[35m ---------------"
             echo -e " || \e[36mAhorcado  \e[35m||"
@@ -27,7 +41,9 @@ else
             echo -e " -----------------------"
             echo -e "- \e[36mUso: \e[0m"
             echo -e "   ayuda \e[0m"
-            echo -e "   ayuda \e[1;36mcomando_a_consultar\e[0m"
+            echo -e "   ayuda \e[1mcomando_a_consultar\e[0m"
+            echo -e "   ayuda \e[1m-l\e[0m (ver lista de comandos disponibles))"
+            echo -e "   ayuda \e[1m-a\e[0m (ver descripción todos los comandos disponibles)"
             echo ""
             echo -e "- \e[36mDescripción: \e[0m"
             echo -e "   Muestra la información de un comando creado por nosotros."  
@@ -78,6 +94,7 @@ else
             echo -e "- \e[36mDescripción: \e[0m"
             echo -e "   Abre un reproductor de música en el directorio especificado que permite reproducir archivos mp3. Si no se especifica un directorio, se abre en el directorio actual."
             ;;
+        
         "tiempo" )  # Ver tiempo actual
             echo -e "\e[35m ---------------------------------"
             echo -e " || \e[36mComando para ver el tiempo  \e[35m||"
