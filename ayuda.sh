@@ -2,7 +2,7 @@
 # Check if user has given an argument, if not, ask it
 if [ -z $1 ] ; then
     echo ""
-    read -p $'\e[35m-> \e[36mIngrese el comando del cual necesitas ayuda: \e[0m'  command
+    read -p $'\e[35m-> \e[36mIngrese el comando del cual necesitas ayuda : \e[0m'  command
 else 
     command=$1
 fi
@@ -12,6 +12,31 @@ else
     # Check if command was created by us
     case $command in
         "-a" ) # Descripción de todos los comandos
+            echo -e "\e[36m ████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+█─▄▄▄─█─▄▄─█▄─▀█▀─▄██▀▄─██▄─▀█▄─▄█▄─▄▄▀█─▄▄─█─▄▄▄▄███▄─▄▄▀█▄─▄█─▄▄▄▄█▄─▄▄─█─▄▄─█▄─▀█▄─▄█▄─▄█▄─▄─▀█▄─▄███▄─▄▄─█─▄▄▄▄█
+█─███▀█─██─██─█▄█─███─▀─███─█▄▀─███─██─█─██─█▄▄▄▄─████─██─██─██▄▄▄▄─██─▄▄▄█─██─██─█▄▀─███─███─▄─▀██─██▀██─▄█▀█▄▄▄▄─█
+▀▄▄▄▄▄▀▄▄▄▄▀▄▄▄▀▄▄▄▀▄▄▀▄▄▀▄▄▄▀▀▄▄▀▄▄▄▄▀▀▄▄▄▄▀▄▄▄▄▄▀▀▀▄▄▄▄▀▀▄▄▄▀▄▄▄▄▄▀▄▄▄▀▀▀▄▄▄▄▀▄▄▄▀▀▄▄▀▄▄▄▀▄▄▄▄▀▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀\e[0m"
+
+printf "\n\n"
+echo "Comando           Descipcion"
+printf "\n\n"
+echo "infosis           Devuelve especificaciones del sistema, tales como:"
+echo "                  Memoria RAM, Arquitectura del sistema y "
+printf "\n\n"
+echo "tiempo            Devuelve la hora y fecha local"
+printf "\n\n"
+echo "buscar            Comando que sirve para buscar un archivo dentro de"
+echo "                  un directorio Especifico"
+printf "\n\n"
+echo "creditos          Muestra los creditos de los programadores"
+printf "\n\n"
+echo "ahorcado          ¿Necesitas un respiro? ¡JUEGA AHORCADO!"
+printf "\n\n"
+echo "musica            Escucha Musica en nuestro nuevo reproductor"
+printf "\n\n"
+echo "neko              ¿Quieres ver algo lindo?"
+printf "\n\n"
+echo "salir             Salir de la linea de comandos"
             ;;
         "-l" ) # Lista de comandos disponibles
             echo -e "\e[35m --------------------------"
@@ -24,6 +49,8 @@ else
             echo -e "   infosis"
             echo -e "   musica"
             echo -e "   tiempo"
+            echo -e "   salir"
+            echo -e "   neko"
             ;;
         "ahorcado" ) # Juego ahorcado
             echo -e "\e[35m ---------------"
@@ -104,6 +131,26 @@ else
             echo ""
             echo -e "- \e[36mDescripción: \e[0m"
             echo -e "   Muestra la hora y fecha actual."
+            ;;
+        "salir") #salir de la linea de 
+            echo -e "\e[35m ---------------------------------"
+            echo -e " || \e[36m Comando para finalizar la ejecucion \e[35m||"
+            echo -e " ---------------------------------"
+            echo -e "- \e[36mUso: \e[0m"
+            echo -e "   finalizar ejecucion del programa \e[0m"
+            echo ""
+            echo -e "- \e[36mDescripción: \e[0m"
+            echo -e "   Es el comando unico para poder finalizar la ejecucion del programa y salir a la terminal nativa del sistema."
+            ;;
+        "neko") #imprimer un neko
+            echo -e "\e[35m ---------------------------------"
+            echo -e " || \e[36m Comando para ver un lindo neko\e[35m||"
+            echo -e " ---------------------------------"
+            echo -e "- \e[36mUso: \e[0m"
+            echo -e "   ver un lindo gato, (se recomienda reducir el tamano de las letras) \e[0m"
+            echo ""
+            echo -e "- \e[36mDescripción: \e[0m"
+            echo -e "   ¿La tarea o el trabajo te tienen estresado?  ¡Ve un lindo gato y olvida tus problemas!"
             ;;
         * ) # Cualquier otro input
             echo ""
