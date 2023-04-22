@@ -15,12 +15,12 @@ if [ $1 ]; then
 	if [ $2 ] ; then
 		search $1 $2
 	else
-		read -p $'\e[35m-> \e[36mIngrese el nombre del archivo que se va a buscar: '  dir
+		read -p $'\e[35m-> \e[36mIngrese el nombre del archivo que se va a buscar: \e[0m'  dir
 		search $1 $dir
 	fi
 else 
-	read -p $'\e[35m-> \e[36mIngrese el nombre del directorio dentro del que se va a buscar: '  dir
-	read -p $'\e[35m-> \e[36mIngrese el nombre del archivo a buscar: '  file
+	read -p $'\e[35m-> \e[36mIngrese el nombre del directorio dentro del que se va a buscar: \e[0m'  dir
+	read -p $'\e[35m-> \e[36mIngrese el nombre del archivo a buscar: \e[0m'  file
 	search $dir $file
 fi
 echo -e "\e[0m"
