@@ -12,18 +12,15 @@ Proyecto final - Linux PROTECO
 
 ## 🗈 Convención de commits 🗈
 > [funcionalidad][bandera][autor] Comentario
-##### ⚙️ Funcionalidades ⚙️
-- **latex**: archivo LaTeX que describa el desarrollo y ejecución del código.
-- **readme**: archivo README con las convencionesd
-- **login**: inicio de sesión
-- **linea-comando**: mostrar línea de comandos.
+##### ⚙️ Comandos ⚙️
+- **login**: inicio de sesión/abrir terminal.
+- **ahorcado**: comando para ejecutar un juego de ahorcado dentro de la terminal.
 - **ayuda**: comando para mostrar información sobre nuestros comandos.
-- **infosis**: comando para dar información del sistema.
-- **fecha-hora** comando para dar fecha y hora.
 - **buscar**: comando para buscar un archivo dentro de un directorio.
 - **creditos**: comando para ver los créditos de los programadores.
-- **juego**: comando para ejecutar un juego dentro de la terminal.
-- **reproductor**: comando para abrir el reproductor.
+- **infosis**: comando para dar información del sistema.
+- **musica**: comando para abrir el reproductor de música.
+- **tiempo** comando para dar fecha y hora.
 ##### 🚩 Banderas 🚩
 - **avance**: se avanzó en este rubro, sin embargo, aún no se encuentra terminado.
 - **fix**: había un error con este rubro y se corrigió
